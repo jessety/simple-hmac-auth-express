@@ -1,0 +1,28 @@
+{
+  "name": "simple-hmac-auth-express",
+  "version": "1.0.0",
+  "description": "Express middleware that implements simple-hmac-auth",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "node ./node_modules/eslint/bin/eslint.js ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jessety/simple-hmac-auth-express.git"
+  },
+  "author": "Jesse T Youngblood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jessety/simple-hmac-auth-express/issues"
+  },
+  "homepage": "https://github.com/jessety/simple-hmac-auth-express#readme",
+  "devDependencies": {
+    "@jessety/eslint-config": "^1.0.4",
+    "eslint": "^5.16.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "simple-hmac-auth": "^2.0.0"
+  }
+}
