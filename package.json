@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "simple-hmac-auth": "^2.2.0"
+    "simple-hmac-auth": "^3.0.0"
   }
 }
