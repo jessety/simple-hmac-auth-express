@@ -1,6 +1,6 @@
 {
   "name": "simple-hmac-auth-express",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Express middleware that implements simple-hmac-auth",
   "main": "src/index.js",
   "scripts": {
