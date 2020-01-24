@@ -8,7 +8,7 @@
 
 const express = require('express');
 // const auth = require('simple-hmac-auth-express');
-const auth = require('../../index.js');
+const auth = require('../../');
 
 // Example settings
 const settings = {
