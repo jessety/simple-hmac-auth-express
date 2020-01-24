@@ -28,7 +28,7 @@ app.use(auth({
   // Required. Execute callback with either an error, or an API key.
   secretForKey: (apiKey, callback) => {
 
-    if (settings.secretsForAPIKeys.hasOwnProperty(apiKey)) {
+    if (settings.secretsForAPIKeys[apiKey]) {
 
       callback(null, settings.secretsForAPIKeys[apiKey]);
       return;
