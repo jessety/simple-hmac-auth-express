@@ -1,5 +1,10 @@
 # simple-hmac-auth-express
+
 Express middleware for creating APIs that implement [simple-hmac-auth](https://github.com/jessety/simple-hmac-auth).
+
+[![ci](https://github.com/jessety/simple-hmac-auth-express/workflows/ci/badge.svg)](https://github.com/jessety/simple-hmac-auth-express/actions)
+[![npm](https://img.shields.io/npm/v/simple-hmac-auth-express.svg)](https://www.npmjs.com/package/simple-hmac-auth-express)
+[![license](https://img.shields.io/github/license/jessety/simple-hmac-auth-koa.svg)](https://github.com/jessety/simple-hmac-auth-express/blob/master/LICENSE)
 
 ## Usage
 
@@ -11,7 +16,7 @@ const auth = require('simple-hmac-auth-express')
 app.use(auth({
 
   // Return a promise that resolves with the secret for the specified API key
-  secretForKey: async (apiKey) => { 
+  secretForKey: async (apiKey) => {
     return 'SECRET';
   },
 
@@ -55,4 +60,4 @@ app.use(auth({
 
 ## License
 
-MIT © Jesse T Youngblood
+MIT © Jesse Youngblood

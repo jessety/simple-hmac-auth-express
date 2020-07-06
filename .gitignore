@@ -1,2 +1,10 @@
 **/node_modules
-**.env
+/coverage
+
+**/.env
+**/.swp
+
+**/.DS_Store
+**/.Spotlight-V100
+**/[Tt]humbs.db
+**/[Dd]esktop.ini

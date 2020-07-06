@@ -1,6 +1,6 @@
 //
 //  Simple HMAC Auth - Express
-//  /examples/minimal/index.js
+//  /example/minimal.js
 //  Created by Jesse Youngblood on 7/22/19 at 23:31
 //
 
@@ -8,7 +8,7 @@
 
 const express = require('express');
 // const auth = require('simple-hmac-auth-express');
-const auth = require('../../');
+const auth = require('../');
 
 const app = express();
 
@@ -19,11 +19,7 @@ app.use(auth({
 
   // Handle requests that have failed authentication
   onRejected: (error, request, response, next) => {
-    response.status(401).json({
-      error: {
-        message: error.message
-      }
-    });
+    response.status(401).json({ error });
   },
 
   // body-parser options, if you need to parse the body of incoming requests

@@ -1,18 +1,16 @@
 //
 //  Simple HMAC Auth - Express
-//  /examples/roundtrip/index.js
-//  Created by Jesse Youngblood on 11/23/18 at 19:31
+//  /example/basic.js
+//  Created by Jesse Youngblood on 11/21/18 at 15:14
 //
 
 'use strict';
 
 const express = require('express');
 // const auth = require('simple-hmac-auth-express');
-const auth = require('../../');
+const auth = require('../');
 
-// Include the core library, for the client implementation
-const SimpleHMACAuth = require('simple-hmac-auth');
-
+// Example settings
 const settings = {
   port: 8000,
   secretsForAPIKeys: {
@@ -30,7 +28,7 @@ app.use(auth({
   // Required. Execute callback with either an error, or an API key.
   secretForKey: (apiKey, callback) => {
 
-    if (settings.secretsForAPIKeys[apiKey] !== undefined) {
+    if (settings.secretsForAPIKeys[apiKey]) {
 
       callback(null, settings.secretsForAPIKeys[apiKey]);
       return;
@@ -44,11 +42,7 @@ app.use(auth({
 
     console.log(`Authentication failed`, error);
 
-    response.status(401).json({
-      error: {
-        message: error.message
-      }
-    });
+    response.status(401).json({ error });
 
     // If you want to ignore the auth failure and permit a request anyway, you certainly can.
     // next();
@@ -75,48 +69,7 @@ app.all('*', (request, response) => {
 });
 
 // Start the server
-const server = app.listen(settings.port, () => {
+app.listen(settings.port, () => {
 
   console.log(`Listening on port ${settings.port}`);
-
-  // Create a client and make a request
-
-  const client = new SimpleHMACAuth.Client('API_KEY', 'SECRET', {
-    verbose: true,
-    host: 'localhost',
-    port: settings.port,
-    ssl: false
-  });
-
-  const options = {
-    method: 'POST',
-    path: '/items/',
-    query: {
-      string: 'string',
-      boolean: true,
-      number: 42,
-      object: { populated: true },
-      array: [1, 2, 3]
-    },
-    data: {
-      string: 'string',
-      boolean: true,
-      number: 42,
-      object: { populated: true },
-      array: [1, 2, 3]
-    }
-  };
-
-  console.log(`Client sending request..`);
-
-  client.request(options).then(response => {
-
-    console.error(`Client received response from server:`, response);
-    server.close();
-
-  }).catch(error => {
-
-    console.error(`Client received error from server:`, error);
-    server.close();
-  });
 });
