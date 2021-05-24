@@ -1,9 +1,8 @@
-**/node_modules
-/coverage
+node_modules
+coverage
+lib
 
-**/.env
-**/.swp
-
+**/*.swp
 **/.DS_Store
 **/.Spotlight-V100
 **/[Tt]humbs.db

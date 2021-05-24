@@ -4,22 +4,19 @@
 //  Created by Jesse Youngblood on 11/23/18 at 19:31
 //
 
-'use strict';
-
-const express = require('express');
-// const auth = require('simple-hmac-auth-express');
-const auth = require('../');
+import express from 'express';
+// import auth from 'simple-hmac-auth-express';
+import auth from '../';
 
 // Include the core library, for the client implementation
-const SimpleHMACAuth = require('simple-hmac-auth');
+import SimpleHMACAuth from 'simple-hmac-auth';
 
-const settings = {
-  port: 8000,
-  secretsForAPIKeys: {
-    API_KEY: 'SECRET',
-    API_KEY_TWO: 'SECRET_TWO',
-    API_KEY_THREE: 'SECRET_THREE'
-  }
+const port = 8000;
+
+const secretsForAPIKeys: {[key:string]:string} = {
+  API_KEY: 'SECRET',
+  API_KEY_TWO: 'SECRET_TWO',
+  API_KEY_THREE: 'SECRET_THREE'
 };
 
 const app = express();
@@ -30,13 +27,13 @@ app.use(auth({
   // Required. Execute callback with either an error, or an API key.
   secretForKey: (apiKey, callback) => {
 
-    if (settings.secretsForAPIKeys[apiKey] !== undefined) {
+    if (secretsForAPIKeys[apiKey] !== undefined) {
 
-      callback(null, settings.secretsForAPIKeys[apiKey]);
+      callback(null, secretsForAPIKeys[apiKey]);
       return;
     }
 
-    callback();
+    callback(new Error('Secret for this key not found'));
   },
 
   // Required. Handle requests that have failed authentication.
@@ -56,7 +53,7 @@ app.use(auth({
 
   // Optional. Log requests that have passed authentication.
   onAccepted: (request, response) => {
-    console.log(`Authentication succeeded for request with api key "${request.apiKey}" and signature: "${request.signature}"`);
+    console.log(`Authentication succeeded for request with api key "${(request as any).apiKey}" and signature: "${(request as any).signature}"`);
   },
 
   // Which body-parser modules to parse the request data. All optional.
@@ -75,16 +72,16 @@ app.all('*', (request, response) => {
 });
 
 // Start the server
-const server = app.listen(settings.port, () => {
+const server = app.listen(port, () => {
 
-  console.log(`Listening on port ${settings.port}`);
+  console.log(`Listening on port ${port}`);
 
   // Create a client and make a request
 
   const client = new SimpleHMACAuth.Client('API_KEY', 'SECRET', {
     verbose: true,
     host: 'localhost',
-    port: settings.port,
+    port: port,
     ssl: false
   });
 

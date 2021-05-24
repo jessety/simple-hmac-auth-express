@@ -13,23 +13,40 @@
   "license": "MIT",
   "author": "Jesse Youngblood",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "directories": {
     "lib": "lib",
     "example": "example",
     "test": "test"
   },
+  "files": [
+    "/lib"
+  ],
   "scripts": {
-    "lint": "eslint .",
-    "test": "jest"
+    "build": "npm run clean && tsc",
+    "clean": "rimraf lib",
+    "format": "sort-package-json && eslint --fix .",
+    "lint": "eslint . && editorconfig-checker .",
+    "test": "npm run build && jest"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "simple-hmac-auth": "^3.3.1"
+    "simple-hmac-auth": "^3.3.4"
   },
   "devDependencies": {
     "@jessety/eslint-config": "^1.0.6",
-    "eslint": "^7.4.0",
+    "@types/express": "^4.17.11",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.6.0",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
+    "editorconfig-checker": "^4.0.2",
+    "eslint": "^7.27.0",
     "express": "^4.17.1",
-    "jest": "^26.1.0"
+    "jest": "^26.5.3",
+    "rimraf": "^3.0.2",
+    "sort-package-json": "^1.50.0",
+    "ts-jest": "^26.5.6",
+    "typescript": "^4.2.4"
   }
 }
