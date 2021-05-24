@@ -1,9 +1,28 @@
 {
-  "extends": "@jessety",
+  "rules": {
+    "linebreak-style": ["warn", "unix"]
+  },
   "overrides": [
     {
-      "files": ["**/*.test.{js,cjs}"],
-      "parserOptions": { "sourceType": "script" },
+      "files": ["**/*.ts"],
+      "extends": [
+        "@jessety",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["**/*.{js,cjs,mjs}"],
+      "extends": "@jessety"
+    },
+    {
+      "files": ["**/*.test.{ts,js,cjs,mjs}"],
       "env": { "jest": true },
       "rules": { "no-console": "warn" }
     }

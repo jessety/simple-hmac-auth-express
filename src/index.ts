@@ -203,7 +203,7 @@ function middleware(options: Partial<SimpleHMACAuthExpressOptions>) {
   }
 
   return server.middleware(options);
-};
+}
 
 export default middleware;
 module.exports = middleware;
