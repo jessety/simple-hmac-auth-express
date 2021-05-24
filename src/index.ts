@@ -4,20 +4,48 @@
 //  Created by Jesse T Youngblood on 11/24/18 at 10:52
 //
 
-'use strict';
+import { Server } from 'simple-hmac-auth';
+import { Request, Response, NextFunction } from 'express';
+import bodyParser from 'body-parser';
 
-const SimpleHMACAuth = require('simple-hmac-auth');
-const bodyParser = require('body-parser');
+// The SecretForKey function may return secrets directly, resolve a promise with the secret, or execute a callback
+type SecretKeyReturnFunction = (key: string) => string | undefined;
+type SecretKeyPromiseFunction = (key: string) => Promise<string>;
+type SecretKeyCallbackFunction = (key: string, callback: ((error: Error) => void) | ((error: undefined, secret: string) => void)) => void;
+type SecretForKeyFunction = SecretKeyReturnFunction | SecretKeyPromiseFunction | SecretKeyCallbackFunction;
+
+type onAcceptedFunction = (request: Request, response: Response) => void;
+type onRejectedFunction = (error: Error, request: Request, response: Response, next: NextFunction) => void;
+
+interface SimpleHMACAuthExpressOptions {
+  secretForKey: SecretForKeyFunction
+  onAccepted?: onAcceptedFunction
+  onRejected: onRejectedFunction
+  bodySizeLimit: number,
+  bodySizeLimitString?: string
+  body?: {
+    json?: true | bodyParser.OptionsJson
+    urlencoded?: true | bodyParser.OptionsUrlencoded
+    text?: true | bodyParser.OptionsText
+    raw?: true | {
+      type: string
+      limit: string
+    }
+  }
+}
 
 // Extend the SimpleHMACAuth class to add a function which returns Express middleware
-class SimpleHMACAuthExpress extends SimpleHMACAuth.Server {
+class SimpleHMACAuthExpress extends Server {
+
+  public onAccepted?: onAcceptedFunction
+  public onRejected?: onRejectedFunction
 
   /**
    * Return middleware for use with Express
    * @param   {object} options - Options
    * @returns {array}  - Array of middleware for Express
    */
-  middleware(options) {
+  middleware(options: Partial<SimpleHMACAuthExpressOptions>): ((request: Request, response: Response, next: NextFunction) => void)[] {
 
     if (typeof options !== 'object') {
       options = {};
@@ -50,45 +78,45 @@ class SimpleHMACAuthExpress extends SimpleHMACAuth.Server {
       options.body.raw = { type: 'application/octet-stream', limit: options.bodySizeLimitString };
     }
 
-    const middleware = [];
+    const middlewareArray: ((request: Request, response: Response, next: NextFunction) => void)[] = [];
 
     // Populate the rawBody attribute by reading the input stream
     // Because this function calls next() immediately and not on 'end', it can consume the data stream in parallel with the body parsers we're going to add below
     // Of course, this also means that if it wasn't followed by middleware that waits until request emits 'end' to call next() that the rawBody would never be populated by the time the authentication middleware gets the request
     // We counter that by including yet another piece of middleware after the body-parsers that resolves immediately if it finds a parsed body, or sets an observer for the request 'end'
     // Whew.
-    middleware.push((request, response, next) => {
+    middlewareArray.push((request, response, next) => {
 
-      const chunks = [];
+      const chunks: Buffer[] = [];
 
       request.on('data', chunk => chunks.push(chunk));
-      request.on('end', () => request.rawBody = Buffer.concat(chunks).toString());
+      request.on('end', () => (request as any).rawBody = Buffer.concat(chunks).toString());
 
       next();
     });
 
     if (typeof options.body.json === 'object') {
-      middleware.push(bodyParser.json(options.body.json));
+      middlewareArray.push(bodyParser.json(options.body.json));
     }
 
     if (typeof options.body.urlencoded === 'object') {
-      middleware.push(bodyParser.urlencoded(options.body.urlencoded));
+      middlewareArray.push(bodyParser.urlencoded(options.body.urlencoded));
     }
 
     if (typeof options.body.text === 'object') {
-      middleware.push(bodyParser.text(options.body.text));
+      middlewareArray.push(bodyParser.text(options.body.text));
     }
 
     if (typeof options.body.raw === 'object') {
-      middleware.push(bodyParser.raw(options.body.raw));
+      middlewareArray.push(bodyParser.raw(options.body.raw));
     }
 
     // And finally, one last one that calls next() when the stream has completed.
     // If there's no parsing middleware involved, that'll be whenever on('end') is called
     // If there is, Express won't even push the request to this part until the 'body' has already been populated by one of the parsing strategies above.
-    middleware.push((request, response, next) => {
+    middlewareArray.push((request, response, next) => {
 
-      if (request.rawBody !== undefined) {
+      if ((request as any).rawBody !== undefined) {
         // 'end' has already triggered
         next();
       }
@@ -100,9 +128,9 @@ class SimpleHMACAuthExpress extends SimpleHMACAuth.Server {
     });
 
     // Finally, middleware that autheticates the request- now that we know we have the raw body to work with.
-    const authMiddleware = async (request, response, next) => {
+    const authMiddleware = async (request: Request, response: Response, next: NextFunction) => {
 
-      this.authenticate(request, request.rawBody).then(() => {
+      this.authenticate(request, (request as any).rawBody).then(() => {
 
         if (typeof this.onAccepted === 'function') {
 
@@ -121,11 +149,11 @@ class SimpleHMACAuthExpress extends SimpleHMACAuth.Server {
     };
 
     // Push the auth middleware as an arrow function so it retains a sense of self^H^H^H^H ..this
-    middleware.push((...parameters) => {
+    middlewareArray.push((...parameters) => {
       authMiddleware(...parameters);
     });
 
-    return middleware;
+    return middlewareArray;
   }
 }
 
@@ -144,13 +172,13 @@ class SimpleHMACAuthExpress extends SimpleHMACAuth.Server {
  * @param {number} [options.bodySizeLimit=10] - maximum body size, in mb
  * @returns {function} middleware function
  */
-module.exports = function(options) {
+function middleware(options: Partial<SimpleHMACAuthExpressOptions>) {
 
   if (typeof options !== 'object') {
     options = {};
   }
 
-  if (typeof options.secretForKey !== 'function') {
+  if (options.secretForKey === undefined || typeof options.secretForKey !== 'function') {
     throw new Error(`simple-hmac-auth-express missing 'secretForKey' parameter when creating middleware.`);
   }
 
@@ -176,3 +204,6 @@ module.exports = function(options) {
 
   return server.middleware(options);
 };
+
+export default middleware;
+module.exports = middleware;
