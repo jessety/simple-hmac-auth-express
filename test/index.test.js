@@ -1,7 +1,7 @@
 'use strict';
 
 // const auth = require('simple-hmac-auth-express');
-const auth = require('../');
+const auth = require('../src');
 
 // Include the core library, for the client implementation
 const SimpleHMACAuth = require('simple-hmac-auth');
