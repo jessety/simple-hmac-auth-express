@@ -3,6 +3,7 @@
 Express middleware for creating APIs that implement [simple-hmac-auth](https://github.com/jessety/simple-hmac-auth).
 
 [![ci](https://github.com/jessety/simple-hmac-auth-express/workflows/ci/badge.svg)](https://github.com/jessety/simple-hmac-auth-express/actions)
+[![coverage](https://codecov.io/gh/jessety/simple-hmac-auth-express/branch/main/graph/badge.svg?token=L2TEZZKSVJ)](https://codecov.io/gh/jessety/simple-hmac-auth-express)
 [![npm](https://img.shields.io/npm/v/simple-hmac-auth-express.svg)](https://www.npmjs.com/package/simple-hmac-auth-express)
 [![license](https://img.shields.io/github/license/jessety/simple-hmac-auth-koa.svg)](https://github.com/jessety/simple-hmac-auth-express/blob/master/LICENSE)
 
