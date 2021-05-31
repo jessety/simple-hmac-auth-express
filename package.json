@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "simple-hmac-auth": "^3.3.4"
+    "simple-hmac-auth": "^3.3.5"
   },
   "devDependencies": {
     "@jessety/eslint-config": "^1.0.6",
